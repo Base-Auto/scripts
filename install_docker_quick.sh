@@ -33,5 +33,15 @@ apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugi
 
 systemctl enable --now docker
 
+# Ajout de l'utilisateur courant au groupe docker
+if [[ -n "${SUDO_USER:-}" ]]; then
+  usermod -aG docker "$SUDO_USER"
+  echo "[OK] User '$SUDO_USER' added to docker group"
+else
+  echo "[WARN] Could not determine original user, run manually: sudo usermod -aG docker \$USER"
+fi
+
+newgrp docker
+
 echo "[OK] $(docker --version)"
 echo "[OK] $(docker compose version)"
